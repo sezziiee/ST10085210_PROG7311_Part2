@@ -1,0 +1,49 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+.coolnav {
+    background:linear-gradient(#4D0AA4,#258cfb);
+    position: relative;
+}
+.btnLogin {
+    background-color: #258cfb;
+    border: 1px solid #258cfb;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 16px;
+}
+.btnLogin:hover{
+    border: 1px solid #258cfb;
+    background-color: transparent;
+
+}
+.coolbg {
+    height: 100vh;
+    background-image: url("../tractor.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    top: 0;
+    margin: 0px;    
+}
+
