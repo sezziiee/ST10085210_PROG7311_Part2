@@ -8,7 +8,7 @@ namespace PROGP2.UserData
         AgriEnergyConnectContext context = new AgriEnergyConnectContext();
         List<Products> products = new List<Products>();
 
-        public Farmer(int userID, string username, string password) : base( username, password)
+        public Farmer(string username, string password, string roleID) : base( username, password)
         {
 
         }

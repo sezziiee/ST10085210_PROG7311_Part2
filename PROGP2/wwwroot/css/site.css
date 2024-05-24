@@ -18,7 +18,7 @@ html {
 }
 
 .coolnav {
-    background:linear-gradient(#4D0AA4,#258cfb);
+    background-color: transparent;
     position: relative;
 }
 .btnLogin {

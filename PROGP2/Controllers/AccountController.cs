@@ -30,37 +30,43 @@ namespace PROGP2.Controllers
 
             // Check username and password
             var user = AuthenticateUser(username, password);
-           
+
+
             if (user != null)
             {
-                var claims = new List<Claim>
+                var roleName = context.Roles.FirstOrDefault(r => r.RoleId == user.RoleId)?.RoleName;
+                if (roleName != null)
+                {
+                    var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, username),
                     new Claim("UserID", user.UserId.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.RoleName)
+                    new Claim(ClaimTypes.Role, roleName),
                 };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var authProperties = new AuthenticationProperties
-                {
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true
+                    };
 
-                };
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
+                    return RedirectToAction("Index", "Home");
 
-                return RedirectToAction("Index", "Home");
-
+                }
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid username or password");
-            return View();
-        }
-
+                ModelState.AddModelError(string.Empty, "Invalid username or password");
+                return View();
+            }
+        
+    
         private User AuthenticateUser(string username, string password)
         {
             //var user = context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);

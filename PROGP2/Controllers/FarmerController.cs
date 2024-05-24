@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PROGP2.Controllers
 {
-    [Authorize(Roles = "Farmer")]
+    [Authorize(Policy = "FarmerOnly")]
     public class FarmerController : Controller
     {
         public IActionResult Index()

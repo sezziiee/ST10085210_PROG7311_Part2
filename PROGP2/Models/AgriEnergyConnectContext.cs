@@ -59,9 +59,7 @@ public partial class AgriEnergyConnectContext : DbContext
         modelBuilder.Entity<Role>(entity =>
         {
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
-            entity.Property(e => e.RoleName)
-                .HasMaxLength(10)
-                .IsFixedLength();
+            entity.Property(e => e.RoleName).HasMaxLength(10);
         });
 
         modelBuilder.Entity<User>(entity =>
