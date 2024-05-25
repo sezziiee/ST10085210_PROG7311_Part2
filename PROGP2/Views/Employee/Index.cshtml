@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Farmers";
+}
+
+<h2>Farmers</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var farmer in Model)
+        {
+            <tr>
+                <td>@farmer.Username</td>
+                <td>
+                    <form asp-action="ProductsByFarmer" method="get" style="display:inline;">
+                        <input type="hidden" name="farmerId" value="@farmer.UserId" />
+                        <button type="submit" class="btn btn-primary">View Products</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Filter Products</h3>
+
+<form asp-action="ProductsByFarmer" method="get">
+    <div class="form-group">
+        <label for="farmerId">Farmer ID:</label>
+        <input type="number" class="form-control" id="farmerId" name="farmerId" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter by Farmer</button>
+</form>
+
+<form asp-action="ProductsByDateRange" method="get">
+    <div class="form-group">
+        <label for="startDate">Start Date:</label>
+        <input type="date" class="form-control" id="startDate" name="startDate" required>
+    </div>
+    <div class="form-group">
+        <label for="endDate">End Date:</label>
+        <input type="date" class="form-control" id="endDate" name="endDate" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter by Date Range</button>
+</form>
+
+<form asp-action="ResetFilters" method="get">
+    <button type="submit" class="btn btn-secondary">Reset Filters</button>
+</form>
