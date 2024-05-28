@@ -22,7 +22,7 @@ namespace PROGP2
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("FarmerOnly", policy => policy.RequireRole("Farmer"));
-                options.AddPolicy("EmployeeOnly", policy => policy.RequireRole("Employee"));
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
             });
 
             var app = builder.Build();

@@ -20,7 +20,18 @@ html {
 .coolnav {
     background-color: transparent;
     position: relative;
+    max-width: 900px; 
+    margin: 0 auto; 
 }
+
+    .coolnav .navbar-brand {
+        font-size: 1.5rem;
+    }
+
+    .coolnav .navbar-nav .nav-link {
+        font-size: 1rem; 
+        padding: 0.5rem 1rem; 
+    }
 .btnLogin {
     background-color: #258cfb;
     border: 1px solid #258cfb;
@@ -46,4 +57,5 @@ html {
     top: 0;
     margin: 0px;    
 }
+
 

@@ -76,5 +76,10 @@ namespace PROGP2.Controllers
          .FirstOrDefault(u => u.Username == username && u.Password == password);
 
         }
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

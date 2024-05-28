@@ -34,15 +34,13 @@ namespace PROGP2.Controllers
         [HttpPost]
         public IActionResult AddProduct(Product product)
         {
-            if (ModelState.IsValid)
-            {
+          
                 product.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 context.Products.Add(product);
                 context.SaveChanges();
                 return RedirectToAction("Index");
-            }
-            ViewBag.Categories = context.Categories.ToList();
-            return View(product);
+          
+           
         }
     }
 }

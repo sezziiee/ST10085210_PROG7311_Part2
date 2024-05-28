@@ -1,54 +1,99 @@
 ﻿@{
-    ViewData["Title"] = "Farmers";
+    ViewData["Title"] = "Employee Dashboard";
 }
 
-<h2>Farmers</h2>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Employee Dashboard</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var farmer in Model)
-        {
-            <tr>
-                <td>@farmer.Username</td>
-                <td>
-                    <form asp-action="ProductsByFarmer" method="get" style="display:inline;">
-                        <input type="hidden" name="farmerId" value="@farmer.UserId" />
-                        <button type="submit" class="btn btn-primary">View Products</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<h3>Filter Products</h3>
-
-<form asp-action="ProductsByFarmer" method="get">
-    <div class="form-group">
-        <label for="farmerId">Farmer ID:</label>
-        <input type="number" class="form-control" id="farmerId" name="farmerId" required>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Filter Products</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Index" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="farmerId" class="form-label">Farmer</label>
+                        <select id="farmerId" name="farmerId" class="form-select">
+                            <option value="0">All Farmers</option>
+                            @foreach (var farmer in ViewBag.Farmers)
+                            {
+                                <option value="@farmer.Value">@farmer.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="categoryId" class="form-label">Category</label>
+                        <select id="categoryId" name="categoryId" class="form-select">
+                            <option value="">All Categories</option>
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <option value="@category.Value">@category.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Filter by Farmer</button>
-</form>
 
-<form asp-action="ProductsByDateRange" method="get">
-    <div class="form-group">
-        <label for="startDate">Start Date:</label>
-        <input type="date" class="form-control" id="startDate" name="startDate" required>
+    <div class="card">
+        <div class="card-header">
+            <h3>Products</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Production Date</th>
+                        <th>Farmer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.Name</td>
+                            <td>@product.Description</td>
+                            <td>@product.Category.Name</td>
+                            <td>@product.ProductionDate.ToString("yyyy-MM-dd")</td>
+                            <td>@product.User.Username</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="endDate">End Date:</label>
-        <input type="date" class="form-control" id="endDate" name="endDate" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Filter by Date Range</button>
-</form>
+</div>
 
-<form asp-action="ResetFilters" method="get">
-    <button type="submit" class="btn btn-secondary">Reset Filters</button>
-</form>
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .card {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+</style>
