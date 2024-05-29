@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Request Account";
+}
+
+<h2>Request Account</h2>
+
+<form asp-action="RequestAccount" method="post">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text"  name="username" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Request Account</button>
+</form>

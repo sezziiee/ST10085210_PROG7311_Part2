@@ -8,14 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Sdk;
 using Microsoft.AspNetCore.Http;
-using PROGP2.UserData;
+
 using User = PROGP2.Models.User;
+using Notification;
+using System.Net.Http;
 
 namespace PROGP2.Controllers
 {
     public class AccountController : Controller
     {
         AgriEnergyConnectContext context = new AgriEnergyConnectContext();
+        HttpClient httpClient = new HttpClient();
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -62,17 +65,17 @@ namespace PROGP2.Controllers
                 }
             }
 
-                ModelState.AddModelError(string.Empty, "Invalid username or password");
-                return View();
-            }
-        
-    
+            ModelState.AddModelError(string.Empty, "Invalid username or password");
+            return View();
+        }
+
+
         private User AuthenticateUser(string username, string password)
         {
             //var user = context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
 
             return context.Users
-         .Include(u => u.Role) 
+         .Include(u => u.Role)
          .FirstOrDefault(u => u.Username == username && u.Password == password);
 
         }
@@ -81,5 +84,41 @@ namespace PROGP2.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
+        [HttpGet]
+        public IActionResult RequestAccount()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> RequestAccount(string username)
+        {
+            var notificationData = new NotificationData
+            {
+                RequestedBy = username,
+                Message = $"Farmer '{username}' has requested an account.",
+                IsRead = false
+            };
+
+            var response = await httpClient.PostAsJsonAsync("https://localhost:7242/api/Notifications", notificationData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("ConfirmAccount", "Account");
+            }
+
+            ModelState.AddModelError(string.Empty, "Unable to send request.");
+            return View();
+        }
+
+
+        public IActionResult ConfirmAccount()
+        {
+            return View();
+        }
+        
+        
     }
 }
+

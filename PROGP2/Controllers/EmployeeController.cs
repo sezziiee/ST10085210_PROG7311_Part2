@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Notification;
 using PROGP2.Models;
+using System.Net.Http;
 
 namespace PROGP2.Controllers
 {
@@ -11,22 +13,45 @@ namespace PROGP2.Controllers
     {
         AgriEnergyConnectContext context = new AgriEnergyConnectContext();
 
-
+        HttpClient httpClient = new HttpClient();
 
         public async  Task<IActionResult> Index()
         {
+            
             var farmers = await context.Users.Where(u => u.Role.RoleName == "Farmer").ToListAsync();
             ViewBag.Farmers = new SelectList(farmers, "UserId", "Username");
 
+            
             var categories = await context.Categories.ToListAsync();
             ViewBag.Categories = new SelectList(categories, "CategoryId", "Name");
 
+            
             var products = await context.Products
                 .Include(p => p.Category)
                 .Include(p => p.User)
                 .ToListAsync();
 
-            return View(products);
+           
+            HttpClient httpClient = new HttpClient();
+            var response = await httpClient.GetAsync("https://localhost:7242/api/Notifications");
+
+           
+            IEnumerable<NotificationData> notifications = new List<NotificationData>();
+
+
+            if (response.IsSuccessStatusCode)
+            {
+                notifications = await response.Content.ReadAsAsync<IEnumerable<NotificationData>>();
+            }
+
+            
+            var viewModel = new IndexViewModel
+            {
+                Products = products,
+                Notifications = notifications
+            };
+
+            return View(viewModel);
         }
         [HttpPost]
 
@@ -100,6 +125,23 @@ namespace PROGP2.Controllers
             return View("Filtered", filteredProducts);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RemoveNotification(int notificationId)
+        {
+            var response = httpClient.DeleteAsync($"https://localhost:7242/api/Notifications{notificationId}").Result;
+            {
+                //var response = await httpClient.DeleteAsync($"api/Notifications/{notificationId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+                }
+            }
+        }
     }
 
 }

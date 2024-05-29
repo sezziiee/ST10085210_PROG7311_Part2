@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PROGP2.Models;
 using System.Security.Claims;
@@ -10,38 +11,64 @@ namespace PROGP2.Controllers
     public class FarmerController : Controller
     {
         AgriEnergyConnectContext context = new AgriEnergyConnectContext();
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var userIDClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIDClaim == null)
-            {
-               
-                return RedirectToAction("Login", "Account");
-            }
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var products = await context.Products
+                .Include(p => p.Category)
+                .Where(p => p.UserId == userId)
+                .ToListAsync();
 
-            var userID = int.Parse(userIDClaim);
-            var products = context.Products.Where(p => p.UserId == userID).ToList();
-            return View(products);
-        
-    }
+            return View("Index", products);
+
+        }
 
         public IActionResult AddProduct()
         {
-            ViewBag.Categories = context.Categories.ToList();
+            var categories = context.Categories.ToList();
+            ViewBag.Category = getCategories();
+            
             return View();
         }
 
         [HttpPost]
-        public IActionResult AddProduct(Product product)
+        [Authorize(Roles = "Farmer")]
+        public IActionResult AddProduct(string name, string description, string categoryid, DateOnly productiondate)
         {
-          
-                product.UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                context.Products.Add(product);
+            var UserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            Console.WriteLine($"{UserId}\n{name}\n{description}\n{categoryid}\n{productiondate}");
+            if (ModelState.IsValid)
+            {
+                
+                context.Products.Add(new Product()
+                {
+                    UserId = UserId,
+                    Name = name,
+                    Description = description,
+                    CategoryId = int.Parse(categoryid),
+                    ProductionDate = productiondate
+                });
+                
                 context.SaveChanges();
                 return RedirectToAction("Index");
-          
+            }
+            return View();
+
            
         }
+        private IEnumerable<SelectListItem> getCategories()
+        {
+            
+            // Fetch categories from the database and map to SelectListItem
+            return context.Categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.Name
+            }).ToList();
+            
+        }
     }
-}
+
+    }
+    
 
